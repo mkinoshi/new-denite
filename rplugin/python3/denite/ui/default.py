@@ -360,7 +360,7 @@ class Default(object):
             elif self._candidates_len != self._winheight:
                 self._winheight = self._candidates_len
 
-        self._displayed_texts = [
+        self._displayed_texts = ['hi'] + [
             self.get_candidate_display_text(i)
             for i in range(self._cursor,
                            min(self._candidates_len,
@@ -391,7 +391,7 @@ class Default(object):
                 self._context['input'].replace(' ', '')
             ))
 
-        self._vim.current.buffer[:] = self._displayed_texts[0]
+        self._vim.current.buffer[:] = self._displayed_texts
         self.resize_buffer()
 
         self.move_cursor()

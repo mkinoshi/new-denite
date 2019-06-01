@@ -391,7 +391,7 @@ class Default(object):
                 self._context['input'].replace(' ', '')
             ))
 
-        self._vim.current.buffer[:] = self._displayed_texts
+        self._vim.current.buffer[:] = self._displayed_texts[0]
         self.resize_buffer()
 
         self.move_cursor()

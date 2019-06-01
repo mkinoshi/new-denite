@@ -360,12 +360,15 @@ class Default(object):
             elif self._candidates_len != self._winheight:
                 self._winheight = self._candidates_len
 
-        self._displayed_texts = ['hi'] + [
+        self._displayed_texts = self.get_current_path() + [
             self.get_candidate_display_text(i)
             for i in range(self._cursor,
                            min(self._candidates_len,
                                self._cursor + self._winheight))
         ]
+
+    def get_current_path(self):
+      return [self._context['path']]
 
     def update_buffer(self):
         if self._bufnr != self._vim.current.buffer.number:

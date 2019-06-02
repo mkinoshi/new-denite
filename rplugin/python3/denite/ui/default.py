@@ -876,7 +876,7 @@ class Default(object):
         if not keys or len(set(keys)) == 1:
             return
 
-        current_index = self._cursor + self._win_cursor - 2
+        current_index = self._cursor + self._win_cursor
         forward_candidates = self._candidates[current_index:]
         forward_sources = groupby(forward_candidates, keyfunc)
         forward_times = len(list(next(forward_sources)[1]))
@@ -893,10 +893,10 @@ class Default(object):
             self._cursor = 0
             self._win_cursor += forward_times
         elif remaining_candidates < self._winheight:
-            self._cursor = self._candidates_len - self._winheight
+            self._cursor = self._candidates_len - self._winheight + 1
             self._win_cursor = self._winheight - remaining_candidates
         else:
-            self._cursor += forward_times + self._win_cursor - 2
+            self._cursor += forward_times + self._win_cursor - 1
             self._win_cursor = 1
 
         self.update_cursor()

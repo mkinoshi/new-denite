@@ -30,7 +30,7 @@ class Default(object):
         self._vim = vim
         self._denite = None
         self._cursor = 0
-        self._win_cursor = 1
+        self._win_cursor = 2
         self._selected_candidates = []
         self._candidates = []
         self._candidates_len = 0
@@ -324,7 +324,7 @@ class Default(object):
         self._denite.init_syntax(self._context, self._is_multi)
 
     def init_cursor(self):
-        self._win_cursor = 1
+        self._win_cursor = 2
         self._cursor = 0
         if self._context['reversed']:
             self.move_to_last_line()

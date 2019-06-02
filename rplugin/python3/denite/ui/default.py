@@ -876,7 +876,7 @@ class Default(object):
         if not keys or len(set(keys)) == 1:
             return
 
-        current_index = self._cursor + self._win_cursor
+        current_index = self._cursor + self._win_cursor - 3
         forward_candidates = self._candidates[current_index:]
         forward_sources = groupby(forward_candidates, keyfunc)
         forward_times = len(list(next(forward_sources)[1]))

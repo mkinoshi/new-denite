@@ -29,7 +29,7 @@ class Default(object):
     def __init__(self, vim):
         self._vim = vim
         self._denite = None
-        self._cursor = 0
+        self._cursor = 1
         self._win_cursor = 1
         self._selected_candidates = []
         self._candidates = []
@@ -325,7 +325,7 @@ class Default(object):
 
     def init_cursor(self):
         self._win_cursor = 1
-        self._cursor = 0
+        self._cursor = 1
         if self._context['reversed']:
             self.move_to_last_line()
 
@@ -779,7 +779,7 @@ class Default(object):
     def move_to_first_line(self):
         if self._win_cursor > 1 or self._cursor > 0:
             self._win_cursor = 1
-            self._cursor = 0
+            self._cursor = 1
             self.update_cursor()
 
     def move_to_last_line(self):
@@ -837,7 +837,7 @@ class Default(object):
         if self._win_cursor > 1:
             self._win_cursor = max(self._win_cursor - scroll, 1)
         elif self._cursor > 0:
-            self._cursor = max(self._cursor - scroll, 0)
+            self._cursor = max(self._cursor - scroll, 1)
         else:
             return
         self.update_cursor()

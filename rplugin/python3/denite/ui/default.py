@@ -324,7 +324,7 @@ class Default(object):
         self._denite.init_syntax(self._context, self._is_multi)
 
     def init_cursor(self):
-        self._win_cursor = 2
+        self._win_cursor = 1
         self._cursor = 1
         if self._context['reversed']:
             self.move_to_last_line()
@@ -332,6 +332,8 @@ class Default(object):
     def update_candidates(self):
         (pattern, statuses,
          self._candidates) = self._denite.filter_candidates(self._context)
+
+        self._selected_candidates = self.get_current_path() + _selected_candidates
 
         prev_matched_pattern = self._matched_pattern
         self._matched_pattern = pattern
@@ -360,7 +362,7 @@ class Default(object):
             elif self._candidates_len != self._winheight:
                 self._winheight = self._candidates_len
 
-        self._displayed_texts = self.get_current_path() + [
+        self._displayed_texts = [
             self.get_candidate_display_text(i)
             for i in range(self._cursor,
                            min(self._candidates_len,

@@ -324,7 +324,7 @@ class Default(object):
         self._denite.init_syntax(self._context, self._is_multi)
 
     def init_cursor(self):
-        self._win_cursor = 1
+        self._win_cursor = 2
         self._cursor = 1
         if self._context['reversed']:
             self.move_to_last_line()
@@ -360,7 +360,7 @@ class Default(object):
             elif self._candidates_len != self._winheight:
                 self._winheight = self._candidates_len
 
-        self._displayed_texts = [
+        self._displayed_texts = self.get_current_path() + [
             self.get_candidate_display_text(i)
             for i in range(self._cursor,
                            min(self._candidates_len,
@@ -690,7 +690,6 @@ class Default(object):
     def gather_candidates(self):
         self._selected_candidates = []
         self._denite.gather_candidates(self._context)
-        self._selected_candidates = self.get_current_path() + _selected_candidates
 
     def do_action(self, action_name, command=''):
         candidates = self.get_selected_candidates()

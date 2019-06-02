@@ -896,7 +896,7 @@ class Default(object):
             self._cursor = self._candidates_len - self._winheight + 1
             self._win_cursor = self._winheight - remaining_candidates
         else:
-            self._cursor += forward_times + self._win_cursor - 1
+            self._cursor += forward_times + self._win_cursor - 2
             self._win_cursor = 1
 
         self.update_cursor()

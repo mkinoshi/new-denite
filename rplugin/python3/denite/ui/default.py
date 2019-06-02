@@ -360,7 +360,7 @@ class Default(object):
             elif self._candidates_len != self._winheight:
                 self._winheight = self._candidates_len
 
-        self._displayed_texts = self.get_current_path() + [
+        self._displayed_texts = [
             self.get_candidate_display_text(i)
             for i in range(self._cursor,
                            min(self._candidates_len,
@@ -690,6 +690,7 @@ class Default(object):
     def gather_candidates(self):
         self._selected_candidates = []
         self._denite.gather_candidates(self._context)
+        self._selected_candidates = self.get_current_path() + _selected_candidates
 
     def do_action(self, action_name, command=''):
         candidates = self.get_selected_candidates()

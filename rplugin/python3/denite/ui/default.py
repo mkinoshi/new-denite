@@ -900,7 +900,7 @@ class Default(object):
             self._cursor += forward_times + self._win_cursor - 1
             self._win_cursor = 1
 
-        self.update_cursor()
+        # self.update_cursor()
 
     def jump_to_prev_by(self, key):
         keyfunc = self._keyfunc(key)

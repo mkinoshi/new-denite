@@ -362,8 +362,8 @@ class Default(object):
             elif self._candidates_len != self._winheight:
                 self._winheight = self._candidates_len
 
-        self._displayed_texts = self.get_current_path() + [
-            self.get_candidate_display_text(i)
+        self._displayed_texts = [
+            self.get_candidate_display_text(i) if i > 0 else 'Hi'
             for i in range(self._cursor,
                            min(self._candidates_len,
                                self._cursor + self._winheight))

@@ -532,14 +532,14 @@ class Default(object):
             self.move_to_next_line()
         self.quit_buffer()
 
-    # def move_cursor(self):
-        # if self._win_cursor > self._vim.call('line', '$'):
-            # self._win_cursor = self._vim.call('line', '$')
-        # if self._win_cursor != self._vim.call('line', '.'):
-            # self._vim.call('cursor', [self._win_cursor, 1])
+    def move_cursor(self):
+        if self._win_cursor > self._vim.call('line', '$'):
+            self._win_cursor = self._vim.call('line', '$')
+        if self._win_cursor != self._vim.call('line', '.'):
+            self._vim.call('cursor', [self._win_cursor, 1])
 
-        # if self._context['auto_action']:
-            # self.do_action(self._context['auto_action'])
+        if self._context['auto_action']:
+            self.do_action(self._context['auto_action'])
 
     def change_mode(self, mode):
         self._current_mode = mode

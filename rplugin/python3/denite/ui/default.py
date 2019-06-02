@@ -870,13 +870,13 @@ class Default(object):
         while self._cursor >= 1 and self._win_cursor < self._winheight:
             self.scroll_window_up_one_line()
 
-    def jump_to_next_by(self, key):
+    def jump_to_next_by2(self, key):
         keyfunc = self._keyfunc(key)
         keys = [keyfunc(candidate) for candidate in self._candidates]
         if not keys or len(set(keys)) == 1:
             return
 
-        # current_index = self._cursor + self._win_cursor - 1
+        current_index = self._cursor + self._win_cursor - 1
         forward_candidates = self._candidates[current_index:]
         forward_sources = groupby(forward_candidates, keyfunc)
         forward_times = len(list(next(forward_sources)[1]))

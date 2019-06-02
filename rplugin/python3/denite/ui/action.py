@@ -114,6 +114,7 @@ def _scroll_cursor_to_bottom(prompt, params):
 
 
 def _jump_to_next_by(prompt, params):
+    return 'hi'
     # return prompt.denite.jump_to_next_by(params)
 
 
@@ -122,6 +123,7 @@ def _jump_to_previous_by(prompt, params):
 
 
 def _jump_to_next_source(prompt, params):
+    return 'hi'
     # return prompt.denite.jump_to_next_by('source_name')
 
 

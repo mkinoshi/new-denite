@@ -333,7 +333,7 @@ class Default(object):
         (pattern, statuses,
          self._candidates) = self._denite.filter_candidates(self._context)
 
-        self._selected_candidates = self.get_current_path() + _selected_candidates
+        self._candidates = self.get_current_path() + self._candidates
 
         prev_matched_pattern = self._matched_pattern
         self._matched_pattern = pattern

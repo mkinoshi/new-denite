@@ -363,7 +363,7 @@ class Default(object):
                 self._winheight = self._candidates_len
 
         self._displayed_texts = [
-            self.get_candidate_display_text(i) if i > 0 else 'Hi'
+            self.get_candidate_display_text(i)
             for i in range(self._cursor,
                            min(self._candidates_len,
                                self._cursor + self._winheight))
@@ -455,20 +455,26 @@ class Default(object):
             source_name = short_name if source_names == 'short' else name
         return source_name
 
+    def get_current_path_display_text(self, candidate):
+        return candidate
+
     def get_candidate_display_text(self, index):
-        source_names = self._context['source_names']
-        candidate = self._candidates[index]
-        terms = []
-        if self._is_multi and source_names != 'hide':
-            terms.append(self.get_display_source_name(
-                candidate['source_name']))
-        encoding = self._context['encoding']
-        abbr = candidate.get('abbr', candidate['word']).encode(
-            encoding, errors='replace').decode(encoding, errors='replace')
-        terms.append(abbr[:int(self._context['max_candidate_width'])])
-        return (self._context['selected_icon']
-                if index in self._selected_candidates
-                else ' ') + ' '.join(terms).replace('\n', '')
+        if index == 0:
+          return self.get_current_path_display_text(self._candidates[index])
+        else:
+          source_names = self._context['source_names']
+          candidate = self._candidates[index]
+          terms = []
+          if self._is_multi and source_names != 'hide':
+              terms.append(self.get_display_source_name(
+                  candidate['source_name']))
+          encoding = self._context['encoding']
+          abbr = candidate.get('abbr', candidate['word']).encode(
+              encoding, errors='replace').decode(encoding, errors='replace')
+          terms.append(abbr[:int(self._context['max_candidate_width'])])
+          return (self._context['selected_icon']
+                  if index in self._selected_candidates
+                  else ' ') + ' '.join(terms).replace('\n', '')
 
     def resize_buffer(self):
         split = self._context['split']

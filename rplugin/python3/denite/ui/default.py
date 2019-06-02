@@ -360,12 +360,19 @@ class Default(object):
             elif self._candidates_len != self._winheight:
                 self._winheight = self._candidates_len
 
-        self._displayed_texts = self.get_current_path() + [
+        # self._displayed_texts = self.get_current_path() + [
+            # self.get_candidate_display_text(i)
+            # for i in range(self._cursor,
+                           # min(self._candidates_len,
+                               # self._cursor + self._winheight))
+        # ]
+        self._displayed_texts = [
             self.get_candidate_display_text(i)
             for i in range(self._cursor,
                            min(self._candidates_len,
                                self._cursor + self._winheight))
         ]
+
 
     def get_current_path(self):
       return [self._context['path']]
@@ -870,7 +877,7 @@ class Default(object):
         while self._cursor >= 1 and self._win_cursor < self._winheight:
             self.scroll_window_up_one_line()
 
-    def jump_to_next_by2(self, key):
+    def jump_to_next_by(self, key):
         keyfunc = self._keyfunc(key)
         keys = [keyfunc(candidate) for candidate in self._candidates]
         if not keys or len(set(keys)) == 1:

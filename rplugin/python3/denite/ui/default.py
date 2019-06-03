@@ -140,6 +140,7 @@ class Default(object):
             self.gather_candidates()
             self.update_candidates()
             self.init_cursor()
+            self.do_action('new')
 
             if self.check_option():
                 return

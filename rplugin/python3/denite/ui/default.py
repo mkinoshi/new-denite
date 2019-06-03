@@ -128,6 +128,7 @@ class Default(object):
             self._context.update(context)
             self._context['sources'] = sources
             self._context['is_redraw'] = False
+            self._context['args'] = 'new'
             self._current_mode = context['mode']
             self._is_multi = len(sources) > 1
 
@@ -140,7 +141,6 @@ class Default(object):
             self.gather_candidates()
             self.update_candidates()
             self.init_cursor()
-            self.do_action('new')
 
             if self.check_option():
                 return

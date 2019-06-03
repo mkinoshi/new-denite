@@ -72,7 +72,7 @@ class Default(object):
 
         self._result = []
         context['sources_queue'] = [sources]
-        context['sources_queue'].append([{'name': 'file', 'args': ['new']}])
+        context['sources_queue'].append({'name': 'file', 'args': ['new']})
         self._sources_history = []
         try:
             while context['sources_queue']:

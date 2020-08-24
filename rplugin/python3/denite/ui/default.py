@@ -30,7 +30,7 @@ class Default(object):
         self._vim = vim
         self._denite = None
         self._cursor = 0
-        self._win_cursor = 1
+        self._win_cursor = 2
         self._selected_candidates = []
         self._candidates = []
         self._candidates_len = 0
@@ -324,7 +324,7 @@ class Default(object):
         self._denite.init_syntax(self._context, self._is_multi)
 
     def init_cursor(self):
-        self._win_cursor = 1
+        self._win_cursor = 2
         self._cursor = 0
         if self._context['reversed']:
             self.move_to_last_line()
@@ -332,6 +332,8 @@ class Default(object):
     def update_candidates(self):
         (pattern, statuses,
          self._candidates) = self._denite.filter_candidates(self._context)
+
+        self._candidates = self.get_current_path() + self._candidates
 
         prev_matched_pattern = self._matched_pattern
         self._matched_pattern = pattern
@@ -366,6 +368,10 @@ class Default(object):
                            min(self._candidates_len,
                                self._cursor + self._winheight))
         ]
+
+
+    def get_current_path(self):
+      return [self._context['path']]
 
     def update_buffer(self):
         if self._bufnr != self._vim.current.buffer.number:
@@ -449,20 +455,26 @@ class Default(object):
             source_name = short_name if source_names == 'short' else name
         return source_name
 
+    def get_current_path_display_text(self, candidate):
+        return candidate
+
     def get_candidate_display_text(self, index):
-        source_names = self._context['source_names']
-        candidate = self._candidates[index]
-        terms = []
-        if self._is_multi and source_names != 'hide':
-            terms.append(self.get_display_source_name(
-                candidate['source_name']))
-        encoding = self._context['encoding']
-        abbr = candidate.get('abbr', candidate['word']).encode(
-            encoding, errors='replace').decode(encoding, errors='replace')
-        terms.append(abbr[:int(self._context['max_candidate_width'])])
-        return (self._context['selected_icon']
-                if index in self._selected_candidates
-                else ' ') + ' '.join(terms).replace('\n', '')
+        if index == 0:
+          return self.get_current_path_display_text(self._candidates[index])
+        else:
+          source_names = self._context['source_names']
+          candidate = self._candidates[index]
+          terms = []
+          if self._is_multi and source_names != 'hide':
+              terms.append(self.get_display_source_name(
+                  candidate['source_name']))
+          encoding = self._context['encoding']
+          abbr = candidate.get('abbr', candidate['word']).encode(
+              encoding, errors='replace').decode(encoding, errors='replace')
+          terms.append(abbr[:int(self._context['max_candidate_width'])])
+          return (self._context['selected_icon']
+                  if index in self._selected_candidates
+                  else ' ') + ' '.join(terms).replace('\n', '')
 
     def resize_buffer(self):
         split = self._context['split']
@@ -867,80 +879,80 @@ class Default(object):
         while self._cursor >= 1 and self._win_cursor < self._winheight:
             self.scroll_window_up_one_line()
 
-    def jump_to_next_by(self, key):
-        keyfunc = self._keyfunc(key)
-        keys = [keyfunc(candidate) for candidate in self._candidates]
-        if not keys or len(set(keys)) == 1:
-            return
+    # def jump_to_next_by(self, key):
+        # keyfunc = self._keyfunc(key)
+        # keys = [keyfunc(candidate) for candidate in self._candidates]
+        # if not keys or len(set(keys)) == 1:
+            # return
 
-        current_index = self._cursor + self._win_cursor - 1
-        forward_candidates = self._candidates[current_index:]
-        forward_sources = groupby(forward_candidates, keyfunc)
-        forward_times = len(list(next(forward_sources)[1]))
-        if not forward_times:
-            return
-        remaining_candidates = (self._candidates_len - current_index
-                                - forward_times)
-        if next(forward_sources, None) is None:
-            # If the cursor is on the last source
-            self._cursor = 0
-            self._win_cursor = 1
-        elif self._candidates_len < self._winheight:
-            # If there is a space under the candidates
-            self._cursor = 0
-            self._win_cursor += forward_times
-        elif remaining_candidates < self._winheight:
-            self._cursor = self._candidates_len - self._winheight + 1
-            self._win_cursor = self._winheight - remaining_candidates
-        else:
-            self._cursor += forward_times + self._win_cursor - 1
-            self._win_cursor = 1
+        # current_index = self._cursor + self._win_cursor - 1
+        # forward_candidates = self._candidates[current_index:]
+        # forward_sources = groupby(forward_candidates, keyfunc)
+        # forward_times = len(list(next(forward_sources)[1]))
+        # if not forward_times:
+            # return
+        # remaining_candidates = (self._candidates_len - current_index
+                                # - forward_times)
+        # if next(forward_sources, None) is None:
+            # # If the cursor is on the last source
+            # self._cursor = 0
+            # self._win_cursor = 1
+        # elif self._candidates_len < self._winheight:
+            # # If there is a space under the candidates
+            # self._cursor = 0
+            # self._win_cursor += forward_times
+        # elif remaining_candidates < self._winheight:
+            # self._cursor = self._candidates_len - self._winheight + 1
+            # self._win_cursor = self._winheight - remaining_candidates
+        # else:
+            # self._cursor += forward_times + self._win_cursor - 1
+            # self._win_cursor = 1
 
-        self.update_cursor()
+        # self.update_cursor()
 
-    def jump_to_prev_by(self, key):
-        keyfunc = self._keyfunc(key)
-        keys = [keyfunc(candidate) for candidate in self._candidates]
-        if not keys or len(set(keys)) == 1:
-            return
+    # def jump_to_prev_by(self, key):
+        # keyfunc = self._keyfunc(key)
+        # keys = [keyfunc(candidate) for candidate in self._candidates]
+        # if not keys or len(set(keys)) == 1:
+            # return
 
-        current_index = self._cursor + self._win_cursor - 1
-        backward_candidates = reversed(self._candidates[:current_index + 1])
-        backward_sources = groupby(backward_candidates, keyfunc)
-        current_source = list(next(backward_sources)[1])
-        try:
-            prev_source = list(next(backward_sources)[1])
-        except StopIteration:  # If the cursor is on the first source
-            last_source = takewhile(
-                lambda candidate:
-                    keyfunc(candidate) == keyfunc(self._candidates[-1]),
-                reversed(self._candidates)
-            )
-            len_last_source = len(list(last_source))
-            if self._candidates_len < self._winheight:
-                self._cursor = 0
-                self._win_cursor = self._candidates_len - len_last_source + 1
-            elif len_last_source < self._winheight:
-                self._cursor = self._candidates_len - self._winheight + 1
-                self._win_cursor = self._winheight - len_last_source
-            else:
-                self._cursor = self._candidates_len - len_last_source
-                self._win_cursor = 1
-        else:
-            back_times = len(current_source) - 1 + len(prev_source)
-            remaining_candidates = (self._candidates_len - current_index
-                                    + back_times)
-            if self._candidates_len < self._winheight:
-                self._cursor = 0
-                self._win_cursor -= back_times
-            elif remaining_candidates < self._winheight:
-                self._cursor = self._candidates_len - self._winheight + 1
-                self._win_cursor = self._winheight - remaining_candidates
-            else:
-                self._cursor -= back_times - self._win_cursor + 1
-                self._win_cursor = 1
+        # current_index = self._cursor + self._win_cursor - 1
+        # backward_candidates = reversed(self._candidates[:current_index + 1])
+        # backward_sources = groupby(backward_candidates, keyfunc)
+        # current_source = list(next(backward_sources)[1])
+        # try:
+            # prev_source = list(next(backward_sources)[1])
+        # except StopIteration:  # If the cursor is on the first source
+            # last_source = takewhile(
+                # lambda candidate:
+                    # keyfunc(candidate) == keyfunc(self._candidates[-1]),
+                # reversed(self._candidates)
+            # )
+            # len_last_source = len(list(last_source))
+            # if self._candidates_len < self._winheight:
+                # self._cursor = 0
+                # self._win_cursor = self._candidates_len - len_last_source + 1
+            # elif len_last_source < self._winheight:
+                # self._cursor = self._candidates_len - self._winheight + 1
+                # self._win_cursor = self._winheight - len_last_source
+            # else:
+                # self._cursor = self._candidates_len - len_last_source
+                # self._win_cursor = 1
+        # else:
+            # back_times = len(current_source) - 1 + len(prev_source)
+            # remaining_candidates = (self._candidates_len - current_index
+                                    # + back_times)
+            # if self._candidates_len < self._winheight:
+                # self._cursor = 0
+                # self._win_cursor -= back_times
+            # elif remaining_candidates < self._winheight:
+                # self._cursor = self._candidates_len - self._winheight + 1
+                # self._win_cursor = self._winheight - remaining_candidates
+            # else:
+                # self._cursor -= back_times - self._win_cursor + 1
+                # self._win_cursor = 1
 
-        self.update_cursor()
+        # self.update_cursor()
 
     def quick_move(self):
         def get_quick_move_table():
